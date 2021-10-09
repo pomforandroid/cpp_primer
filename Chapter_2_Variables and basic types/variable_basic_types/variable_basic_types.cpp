@@ -43,6 +43,30 @@ void test_2_1_3() {
 	nullptr; //指针字面值
 }
 
+void test_2_2_1() {
+	//变量定义
+	int sum = 0, value,
+		units_sold = 0;
+	string book("0-201-78345-X"); // book通过一个string字面值初始化
+
+	//初始化, 注意在C++，初始化和赋值是两个完全不同的操作
+	double price = 109.99, discount = price * 0.16;
+
+	//列表初始化
+	int units_sold1 = 0;
+	int units_sold2 = { 0 };
+	int units_sold3{ 0 }; // c++ 11 new
+	int units_sold4(0);
+
+	//如果使用列表初始化且初始值存在丢失信息的风险，则编译器降报错
+	long double ld = 3.1415926536;
+	//int a{ ld }, b = { ld }; // 错误 conversion from 'long double' to 'int', possible loss of data
+	int c(ld), d = ld; // ok
+	// 默认初始化
+	string empty; // 非显示地初始化成一个空串
+
+}
+
 
 
 int main()
@@ -50,5 +74,6 @@ int main()
 	cout << "Hello variable and basic_types !" << endl;
 	test_2_1_2();
 	test_2_1_3();
+	test_2_2_1();
 	return 0;
 }
