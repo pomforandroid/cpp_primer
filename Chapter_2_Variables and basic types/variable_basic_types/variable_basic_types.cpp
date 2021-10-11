@@ -89,6 +89,12 @@ void test_2_2_4() {
 	cout << ::reused << " " << unique << endl;
 }
 
+void test_2_3() {
+	//符合类型是指基于其他类型定义的类型。C++语音有几种符合类型，其中包括，引用和指针
+	//一条声明语句由一个基本数据类型和紧随其后的一个声明符列表组成
+
+}
+
 int main()
 {
 	cout << "Hello variable and basic_types !" << endl;
