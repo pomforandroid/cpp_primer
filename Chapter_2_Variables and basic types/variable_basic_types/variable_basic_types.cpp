@@ -66,6 +66,15 @@ void test_2_2_1() {
 	string empty; // 非显示地初始化成一个空串
 
 }
+extern double pi = 3.1416; //定义
+void test_2_2_2() {
+	extern int i; //声明i而非定义i
+	int j; // 声明并定义J
+	//extern double pi = 3.1416; 函数体内部如果试图初始化一个由extern关键字标记的变量，将引发错误
+	i = 0; // ok
+	// extern int i2 = 0; not ok
+	
+}
 
 
 
