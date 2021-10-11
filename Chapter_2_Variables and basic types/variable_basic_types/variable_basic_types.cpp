@@ -95,6 +95,22 @@ void test_2_3() {
 
 }
 
+void test_2_3_1() {
+	//引用为对象起了另外一个名字，通过将声明符写成&d的形式来定义引用类型，其中d是声明的变量名
+	int ival = 1024;
+	int& refVal = ival; //refval指向ival(it is another name for ival)
+	//int& refVal2; 报错，引用必须被初始化
+	refVal = 2;
+	cout << "ival: " << ival << endl; //输出2
+	int ii = refVal;
+
+	int& refVal3 = refVal;
+	int i = refVal;
+
+	int& r = i, r2 = ii; //r2是int, r是引用
+
+}
+
 int main()
 {
 	cout << "Hello variable and basic_types !" << endl;
@@ -102,5 +118,6 @@ int main()
 	test_2_1_3();
 	test_2_2_1();
 	test_2_2_4();
+	test_2_3_1();
 	return 0;
 }
