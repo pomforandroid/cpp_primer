@@ -71,12 +71,23 @@ void test_2_2_2() {
 	extern int i; //声明i而非定义i
 	int j; // 声明并定义J
 	//extern double pi = 3.1416; 函数体内部如果试图初始化一个由extern关键字标记的变量，将引发错误
-	i = 0; // ok
+	//i = 0; // 编译器不报错，但是运行会出错
 	// extern int i2 = 0; not ok
 	
 }
 
-
+int reused = 42; // reuused拥有全局作用域
+void test_2_2_4() {
+	//作用域
+	int unique = 0; // unique拥有块作用域
+	//输出#1 使用全局变量reused； 输出42 0
+	cout << reused << " " << unique << endl;
+	int reused = 0; // 新建局部变量reused，覆盖了全局变量reused
+	//输出#2 使用局部变量reused; 输出0 0
+	cout << reused << " " << unique << endl;
+	//输出#3，显示地访问全局变量reused;输出42 0
+	cout << ::reused << " " << unique << endl;
+}
 
 int main()
 {
@@ -84,5 +95,6 @@ int main()
 	test_2_1_2();
 	test_2_1_3();
 	test_2_2_1();
+	test_2_2_4();
 	return 0;
 }
