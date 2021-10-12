@@ -162,6 +162,37 @@ void test_2_3_2() {
 	pv = pd;
 }
 
+void test_2_3_3() {
+	//理解复合类型的声明
+	//i是一个int类型的数，p是一个int型指针，r是一个int型引用
+	int i = 1024, * p = &i, & r = i;
+	//基本数据类型是int而非int*,*仅仅是修饰了p而已
+	int* p1, p2; //p1是指向int的指针，p2是int
+
+	//指向指针的指针
+	int ival = 1024;
+	int* pi = &ival; // pi指向一个int型的数
+	int** ppi = &pi; //ppi指向一个int型的指针
+
+	cout << "the value of ival\n"
+		<< "direct value: " << ival << "\n"
+		<< "indirect value: " << *pi << "\n"
+		<< "doubly indirect value: " << **ppi
+		<< endl;
+
+	//指向指针的引用
+	int i2 = 42;
+	int* p; 
+	int*& r2 = p; //r 是一个对指针P的引用
+
+	r2 = &i2; // r2引用了一个指针，因此给r2赋值就是令p指向i2
+	*r2 = 0; // 解引用r2得到i2, 也就是p指向的对象，将i2的值改为0
+	//要理解r2的类型到底是什么，最简单的方法是从由右向左阅读r2的定义，离变量名最近的符号是&(例子是&r2)对变量的类型有最直接的影响
+	//因此r2是一个引用
+	//声明符的其余部分用以确定r2引用得类型是什么，例子是*说明r2引用得是一个指针
+	//最后声明的基本数据类型部分指出r2引用得是一个int指针
+}
+
 int main()
 {
 	cout << "Hello variable and basic_types !" << endl;
@@ -171,6 +202,7 @@ int main()
 	test_2_2_4();
 	test_2_3_1();
 	test_2_3_2();
+	test_2_3_3();
 
 	return 0;
 }
