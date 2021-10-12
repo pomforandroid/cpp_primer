@@ -278,6 +278,37 @@ void test_2_4_2() {
 	}
 }
 
+void test_2_4_3() {
+	//顶层const
+	//指针本身是不是常量以及指针所指的是不是一个常量就是两个互相独立的问题
+	//用名词顶层const 表示指针本身就是个常量
+	//而用名词底层const表示指针所指的对象是一个常量
+
+	//更一般的，顶层const可以表示任意的对象是常量，这一点对任何数据类型都适用
+	//指针类型既可以是顶层const也可以是底层const
+	int i = 0;
+	int* const p1 = &i; // 不能改变p1的值，这是一个顶层const
+	const int ci = 42; //不能改变ci的值，这是一个顶层const
+	const int* p2 = &ci; //允许改变p2的值，这是一个底层const
+
+	const int* const p3 = p2; //靠右的是顶层const，靠左的是底层const
+	const int& r = ci; //用于声明引用得都是底层const
+
+	i = ci; // 正确，拷贝ci的值，ci是一个顶层const，对此操作无影响
+	p2 = p3; //正确，p2和p3指向的对象类型相同，p3顶层const的部分不影响
+
+	//另一方面，底层const的限制却不能忽视。
+	//当执行对象的拷贝时，拷入和拷出的对象必须具有相同的底层const资格。
+	//或者两个对象的数据类型必须能够转换
+	//一般来说，非常量可以转换成常量，反之不行
+	//int* p = p3; //错误p3包含底层const的定义，而p没有
+	p2 = p3; // 正确，p2和p3都是底层const
+	p2 = &i; //正确 int*能转换成const int*
+	//int& r = ci; // 错误普通的int&不能绑定到int常量上
+	const int& r2 = i; // 正确：const int&可以绑定到一个普通int上
+
+}
+
 
 int main()
 {
