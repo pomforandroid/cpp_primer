@@ -218,6 +218,34 @@ void test_2_4() {
 
 }
 
+
+void test_2_4_1() {
+	//const的引用
+	//可以把引用绑定到const对象上，就想绑定到其他对象上一样，我们称之为对常量的引用。
+	//与普通引用不同的是，对常量的引用不能被用作修改它所绑定的对象
+
+	const int ci = 1024;
+	const int& r1 = ci; //正确：引用及其对应的对象都是常量
+	//r1 = 42; // 错误:r1是对常量的引用
+	//int& r2 = ci; //错误：试图让一个非常量引用指向一个常量对象
+
+	//初始化对const的引用
+	int i = 42;
+	const int& r1 = i; //允许将const int& 绑定到一个普通的int对象上
+	const int& r2 = 42; //正确：r1是一个常量引用
+	const int& r3 = r1 * 2; //正确
+	//int& r4 = r1 * 2; // 错误：r4是一个普通的非常量引用
+
+	//对const的引用可能引用一个并非const的对象
+	int& r4 = i;
+	//r1 = 0; // not ok
+	r4 = 0;
+
+
+
+
+}
+
 int main()
 {
 	cout << "Hello variable and basic_types !" << endl;
