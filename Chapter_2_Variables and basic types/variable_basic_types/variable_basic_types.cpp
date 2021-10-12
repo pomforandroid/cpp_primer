@@ -182,15 +182,40 @@ void test_2_3_3() {
 
 	//指向指针的引用
 	int i2 = 42;
-	int* p; 
-	int*& r2 = p; //r 是一个对指针P的引用
+	int* p2;
+	int*& r2 = p2; //r 是一个对指针P的引用
 
-	r2 = &i2; // r2引用了一个指针，因此给r2赋值就是令p指向i2
-	*r2 = 0; // 解引用r2得到i2, 也就是p指向的对象，将i2的值改为0
+	r2 = &i2; // r2引用了一个指针，因此给r2赋值就是令p2指向i2
+	*r2 = 0; // 解引用r2得到i2, 也就是p2指向的对象，将i2的值改为0
 	//要理解r2的类型到底是什么，最简单的方法是从由右向左阅读r2的定义，离变量名最近的符号是&(例子是&r2)对变量的类型有最直接的影响
 	//因此r2是一个引用
 	//声明符的其余部分用以确定r2引用得类型是什么，例子是*说明r2引用得是一个指针
 	//最后声明的基本数据类型部分指出r2引用得是一个int指针
+}
+
+const int get_size() {
+	return 1024;
+}
+void test_2_4() {
+	//const限定符
+	const int bufSize = 512; // 输入缓冲区大小
+
+	//bufSize = 512; // 错误：试图向const对象写值 C++ expression must be a modifiable lvalue
+	const int i2 = get_size();
+	const int j = 42;
+	//const int k; 错误：k是一个未经初始化的常量
+
+	int i = 42;
+	const int ci = i; // 正确，i的值被拷贝给了ci
+	int j = ci; // 正确：ci的值被拷贝给了j
+
+	//某些时候有这样一种const变量，它的初始值不是一个常量表达式，但是有必要在文件间共享
+	// file_1.cpp定义并初始化了一个常量，该常量能被其他文件访问
+	//extern const int bufSize = fcn();
+	//file_1.h 头文件
+	//extern const int bufsize; 
+
+
 }
 
 int main()
@@ -203,6 +228,6 @@ int main()
 	test_2_3_1();
 	test_2_3_2();
 	test_2_3_3();
-
+	test_2_4();
 	return 0;
 }
