@@ -182,10 +182,10 @@ void test_2_3_3() {
 
 	//指向指针的引用
 	int i2 = 42;
-	int* p2;
-	int*& r2 = p2; //r 是一个对指针P的引用
+	int* p3;
+	int*& r2 = p3; //r 是一个对指针P的引用
 
-	r2 = &i2; // r2引用了一个指针，因此给r2赋值就是令p2指向i2
+	r2 = &i2; // r2引用了一个指针，因此给r2赋值就是令p3指向i2
 	*r2 = 0; // 解引用r2得到i2, 也就是p2指向的对象，将i2的值改为0
 	//要理解r2的类型到底是什么，最简单的方法是从由右向左阅读r2的定义，离变量名最近的符号是&(例子是&r2)对变量的类型有最直接的影响
 	//因此r2是一个引用
@@ -207,7 +207,7 @@ void test_2_4() {
 
 	int i = 42;
 	const int ci = i; // 正确，i的值被拷贝给了ci
-	int j = ci; // 正确：ci的值被拷贝给了j
+	int k = ci; // 正确：ci的值被拷贝给了k
 
 	//某些时候有这样一种const变量，它的初始值不是一个常量表达式，但是有必要在文件间共享
 	// file_1.cpp定义并初始化了一个常量，该常量能被其他文件访问
@@ -225,7 +225,7 @@ void test_2_4_1() {
 	//与普通引用不同的是，对常量的引用不能被用作修改它所绑定的对象
 
 	const int ci = 1024;
-	const int& r1 = ci; //正确：引用及其对应的对象都是常量
+	const int& r = ci; //正确：引用及其对应的对象都是常量
 	//r1 = 42; // 错误:r1是对常量的引用
 	//int& r2 = ci; //错误：试图让一个非常量引用指向一个常量对象
 
@@ -240,11 +240,44 @@ void test_2_4_1() {
 	int& r4 = i;
 	//r1 = 0; // not ok
 	r4 = 0;
-
-
-
-
 }
+
+
+void test_2_4_2() {
+	//指针和const
+	//与引用一样，也可以令指针指向向量或非常量
+	//类似于常量引用，指向常量的指针不能用于改变所指对象的值
+	//要想存放常量对象的地址，只能使用指向常量的指针
+	const double pi = 3.14;
+	//double* ptr = &pi; // 错误，ptr是一个普通指针，C++ a value of type cannot be used to initialize an entity of type
+	const double* cptr = &pi; //正确， cptr可以指向一个双精度常量
+	//*cptr = 42; // 错误不能给*cptr赋值
+	double dval = 3.14;
+	cptr = &dval;  //正确，但是不能通过cptr改变dval的值
+	cout << "cptr: " <<  *cptr << endl;
+	
+	//const指针
+	//常量指针必须初始化，而且一旦初始化完成后，它的值（也就是存放在指针中的那个地址）就不能再改变了
+	//把*放在const关键字之前用以说明指针是一个常量
+	//这样的书写形式隐含着一层意味，即不变的是指针本身的值而非指向的那个值：
+	int errNumb = 0;
+	int* const curErr = &errNumb; // curErr将一直指向errNumb
+	const double pi = 3.14159;
+	const double* const pip = &pi; //pip是一个指向常量对象的常量指针
+
+	//搞清楚这些声明最行之有效的办法是从右向左阅读
+	//1.离curErr最近的符号是const, 意味着curErr本身是一个常量对象
+	//2.对象的类型由声明符的其余部分确定。声明符中的下一个符号是*，意思是curErr是一个常量指针
+	//3.最后该声明语句的基本数据类型部分确定了常量指针指向的是一个int对象
+
+	//*pip = 2.72; //错误：pip是一个指向常量的指针
+
+	if (*curErr) {
+		*curErr = 0;// 正确: 把curErr所指的对象的值重置
+		//curErr = &pi; //错误
+	}
+}
+
 
 int main()
 {
@@ -257,5 +290,6 @@ int main()
 	test_2_3_2();
 	test_2_3_3();
 	test_2_4();
+	test_2_4_2();
 	return 0;
 }
