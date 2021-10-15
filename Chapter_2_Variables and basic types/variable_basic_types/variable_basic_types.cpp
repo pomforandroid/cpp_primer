@@ -262,8 +262,8 @@ void test_2_4_2() {
 	//这样的书写形式隐含着一层意味，即不变的是指针本身的值而非指向的那个值：
 	int errNumb = 0;
 	int* const curErr = &errNumb; // curErr将一直指向errNumb
-	const double pi = 3.14159;
-	const double* const pip = &pi; //pip是一个指向常量对象的常量指针
+	const double pi2 = 3.14159;
+	const double* const pip = &pi2; //pip是一个指向常量对象的常量指针
 
 	//搞清楚这些声明最行之有效的办法是从右向左阅读
 	//1.离curErr最近的符号是const, 意味着curErr本身是一个常量对象
@@ -306,6 +306,43 @@ void test_2_4_3() {
 	p2 = &i; //正确 int*能转换成const int*
 	//int& r = ci; // 错误普通的int&不能绑定到int常量上
 	const int& r2 = i; // 正确：const int&可以绑定到一个普通int上
+
+}
+
+constexpr int size() {
+	return 1024;
+}
+
+int get_size2() {
+	return 11;
+}
+
+void test_2_4_4() {
+	//constexpr和常量表达式
+	const int max_files = 20; //max_files是常量表达式
+	const int limit = max_files + 1; // limit是常量表达式
+	int staff_size = 27; 
+
+	const int sz = get_size2(); 
+
+	//constexpr变量，c++11规定允许将变量声明为constexpr类型以便由编译器来验证变量的值是否是一个常量表达式
+
+	constexpr int mf = 20;
+	constexpr int lmit = mf + 1;
+	constexpr int sz2 = size();
+
+	//字面值类型
+	//算术类型、引用和指针都属于字面值类型
+	//尽管指针和引用都定义成constexpr,但是他们的初始值却受到严格限制，一个constexpr指针的初始值必须是nullptr或者0
+	//或者是存储在某个固定地址中的对象
+
+	//指针和constexpr
+	const int* p = nullptr; // p是一个指向整型常量的指针
+	constexpr int* q = nullptr; // q是一个指向整数的常量指针
+	//其中关键在于constexpr把它所定义的对象置为了顶层const
+
+
+
 
 }
 
