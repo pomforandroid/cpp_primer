@@ -359,6 +359,11 @@ void test_2_5_1() {
 	const char* cstr = 0; // 是对const pstring cstr的错误理解
 }
 
+void test_2_5_2() {
+	auto i = 0, *p = &i; // 正确，i是整数，p是整数指针
+	//auto sz = 0, pi = 3.14; // 错误, sz和pi的类型不一样
+}
+
 int main()
 {
 	cout << "Hello variable and basic_types !" << endl;
