@@ -362,6 +362,29 @@ void test_2_5_1() {
 void test_2_5_2() {
 	auto i = 0, *p = &i; // 正确，i是整数，p是整数指针
 	//auto sz = 0, pi = 3.14; // 错误, sz和pi的类型不一样
+	// atuo一般会忽略掉顶层const, t同事底层const则会保留下来
+
+	const int ci = i, & cr = ci;
+	auto b = ci; // b是一个整数(ci的顶层const特性被忽略掉了)
+	auto c = cr; // c是一个整数
+	auto d = &i; // d是一个整型指针（整数的地址就是指向整数的指针）
+	auto e = &ci; // e是一个指向整数常量的指针(对常量对象取地址是一种底层const)
+
+	const auto f = ci;  // ci的推演类型是int, f是const int
+}
+
+void test_2_5_3() {
+	//decltype(f()) sum = x; // sum的类型就是函数f的返回类型
+	//编译器并不实际调用函数f, 而是使用当调用发生时f的返回值类型作为sum的类型。
+	//decltype处理顶层const和引用的方式与auto有些许不同.
+	const int ci = 0, & cj = ci;
+	decltype(ci) x = 0; // x的类型是const  int 
+	decltype(cj) y = x; // Y的类型是const int&, y绑定到变量x
+	//decltype(cj) z; // 错误: z是一个引用，必须初始化
+	//decltype的表达式如果是加上了括号的变量，结果将是引用
+	int i = 1;
+	decltype((i)) d ; // 错误： d 是int&, 必须初始化
+	decltype(i) e;
 }
 
 int main()
