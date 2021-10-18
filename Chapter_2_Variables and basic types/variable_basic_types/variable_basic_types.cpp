@@ -341,11 +341,23 @@ void test_2_4_4() {
 	constexpr int* q = nullptr; // q是一个指向整数的常量指针
 	//其中关键在于constexpr把它所定义的对象置为了顶层const
 
-
-
-
 }
 
+
+void test_2_5_1() {
+	//两种方法可定义类型别名。传统的方法是使用关键字typedef
+	typedef double wages;  //wags 是double的同义词
+	typedef wages base, * p;
+	//新标准
+	using sb = double;
+	sb hourly, weekly; //等价于double hourly, weekly
+
+	typedef char* pstring;
+	const pstring cstr = 0; //cstr是指向char的常量指针
+	const pstring* ps; // ps是一个指针，它的对象是指向char的常量指针
+
+	const char* cstr = 0; // 是对const pstring cstr的错误理解
+}
 
 int main()
 {
