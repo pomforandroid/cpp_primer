@@ -100,6 +100,33 @@ void test_10_2_3() {
 		cout << a << endl;
 
 }
+
+bool isShorter(const string& str1, const string& str2) {
+	return str1.size() < str2.size();
+}
+
+void elumDups(vector<string> &words) {
+	sort(words.begin(), words.end());
+	auto end_unique = unique(words.begin(), words.end());
+	words.erase(end_unique, words.end());
+}
+
+
+void test_10_3_1() {
+	//定制操作
+	//向算法传递函数
+	//谓词
+	vector<string> vecs{ "the", "quick", "red", "fox", "jumps", "over", "the", "slow", "red", "turtle" };
+	sort(vecs.begin(), vecs.end(), isShorter); // isShorter就是谓词参数
+
+	vector<string> words{ "the", "quick", "red", "fox", "jumps", "over", "the", "slow", "red", "turtle" };
+	elumDups(words);
+	stable_sort(words.begin(), words.end(), isShorter);
+	for (const auto& s : words)
+		cout << s << " ";
+	cout << endl;
+
+}
 int main()
 {
 	cout << "Hello 泛型算法." << endl;
@@ -107,5 +134,6 @@ int main()
 	test_10_2_1();
 	test_10_2_2();
 	test_10_2_3();
+	test_10_3_1();
 	return 0;
 }
