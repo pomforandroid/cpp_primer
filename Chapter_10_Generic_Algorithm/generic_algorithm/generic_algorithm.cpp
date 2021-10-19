@@ -4,6 +4,7 @@
 #include "generic_algorithm.h"
 #include <list>
 #include <vector>
+#include <numeric>
 
 using namespace std;
 
@@ -29,9 +30,32 @@ void test_10_1() {
 	cout << "result " << *result3 << endl;
 }
 
+void test_10_2_1() {
+	//只读算法
+	vector<int> vec{ 1, 2, 3, 4, 5 };
+	int sum = accumulate(vec.cbegin(), vec.cend(), 0);
+
+	cout << "sum " << sum << endl;
+
+	vector<string> vctr = { "i", "am ", "boy" };
+	//由于string定义了+运算符。所以可以用accumulate来把所有string元素连接起来
+	string sumstr = accumulate(vctr.cbegin(), vctr.cend(), string(""));
+	// 如果传递了一个字符串字面值，用于保存和的对象的类型将是const char*;
+	//const char*上没有定义+运算符. 所以下面代码会报错
+	//string sumstr = accumulate(vctr.cbegin(), vctr.cend(), "");
+
+	vector<char> vchar = { 'i', 'a', 'b' };
+	string sumchar = accumulate(vchar.cbegin(), vchar.cend(), "");
+	cout << "sumchar " << sumchar << endl;
+
+	cout << "sumstr " << sumstr << endl;
+
+}
+
 int main()
 {
 	cout << "Hello 泛型算法." << endl;
 	test_10_1();
+	test_10_2_1();
 	return 0;
 }
