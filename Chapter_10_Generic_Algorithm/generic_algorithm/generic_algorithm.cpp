@@ -5,6 +5,8 @@
 #include <list>
 #include <vector>
 #include <numeric>
+#include <string>
+#include <algorithm>
 
 using namespace std;
 
@@ -81,11 +83,29 @@ void test_10_2_2() {
 
 }
 
+void test_10_2_3() {
+	//重排容器元素的算法
+	vector<string> words{ "the", "quick", "red", "fox", "jumps", "over", "the", "slow", "red", "turtle" };
+	//按字典排序words, 以便查找重复单词
+	sort(words.begin(), words.end());
+	for (auto a : words)
+		cout << a << endl;
+	cout << "-----------------------------" << endl;
+	auto end_unique = unique(words.begin(), words.end());
+	for (auto a : words)
+		cout << a << endl;
+	cout << "-----------------------------" << endl;
+	words.erase(end_unique, words.end());
+	for (auto a : words)
+		cout << a << endl;
+
+}
 int main()
 {
 	cout << "Hello 泛型算法." << endl;
 	test_10_1();
 	test_10_2_1();
 	test_10_2_2();
+	test_10_2_3();
 	return 0;
 }
