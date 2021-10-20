@@ -152,6 +152,67 @@ void test_10_3_1() {
 	cout << endl;
 
 }
+
+void test_10_3_3(vector<string>::size_type sz, ostream &os) {
+	//lambda捕获和返回
+	//当向一个函数传递一个lambda时，同时定义了一个新类型和该类型的一个对象：传递的参数就是此编译器生成的类类型的未命名对象
+
+	//值捕获
+	size_t v1 = 42; //local var
+	// 将v1拷贝到名为f的可调用对象
+	auto f = [v1] {return v1;};
+	v1 = 0;
+	auto j = f();
+	cout << "j = " << j <<endl;
+
+	//引用捕获
+	size_t v2 = 42; //局部变量
+	auto f2 = [&v2] {return v2;};
+	v2 = 0;
+	auto j2 = f2(); //f2保存v2的引用
+	cout << "j2 = " << j2 <<endl;
+
+	//隐私捕获
+	//为了指示编译器推断捕获列表，应在捕获列表中写一个&或=
+	//&表示采用捕获引用方式
+	//=表示采用值捕获方式
+	vector<string> words{ "the", "quick", "red", "fox", "jumps", "over", "the", "slow", "red", "turtle" };
+	auto wc = find_if(words.begin(), words.end(),
+		[=](const string& s)
+		{return s.size() >= sz;});
+
+	//混合使用，捕获列表参数第一个必须是&或者=
+	//sz显示捕获，值捕获方式，os隐式捕获
+	for_each(words.begin(), words.end(),
+		[&, sz](const string& s) {os << s << sz;});
+
+	//os显示捕获，引用捕获方式，sz隐式捕获
+	for_each(words.begin(), words.end(),
+		[=, &os](const string& s) {os << s << sz;});
+
+	//可变lambda
+	size_t v3 = 42;
+	auto f3 = [v3]() mutable {return ++v3;};
+	v3 = 0;
+	auto j3 = f3();
+	cout << "j3 " << j3 << endl;
+	//指定lambda返回类型
+
+	vector<int> ivec = { -1, -2, -3, -6,-8 };
+	//下面的正确，不用指定返回类型，编译器能推断出来
+	transform(ivec.begin(), ivec.end(), ivec.begin(), 
+		[](int i) {return i < 0 ? -i : i;});
+	//书上说这个会错误，但是好像这里编译器也能推断出了
+	transform(ivec.begin(), ivec.end(), ivec.begin(),
+		[](int i) {if (i < 0) return -i; else return i;});
+
+	//显示指定
+	transform(ivec.begin(), ivec.end(), ivec.begin(),
+		[](int i) -> int
+		{if (i < 0) return -i; else return i;});
+		
+}
+
 int main()
 {
 	cout << "Hello 泛型算法." << endl;
@@ -161,5 +222,7 @@ int main()
 	test_10_2_3();
 	test_10_3_1();
 	test_10_3_2();
+	
+	test_10_3_3(3, cout);
 	return 0;
 }
