@@ -112,6 +112,31 @@ void elumDups(vector<string> &words) {
 }
 
 
+void biggies(vector<string>& words, vector<string>::size_type sz) {
+	elumDups(words); // 将words按字典排序，删除重复单词
+	stable_sort(words.begin(), words.end(), isShorter);
+	//获取一个迭代器，指向第一个满足size()>=sz的元素
+	auto wc = find_if(words.begin(), words.end(), 
+		[sz](const string& str) 
+		{return str.size() >= sz;});
+	//计算满足size>=sz的元素的数目
+	auto count = words.end() - wc;
+	cout << count << " " << count << endl;
+
+	//打印长度大于等于给定值的单词，每个单词后面接一个空格
+
+	for_each(wc, words.end(),
+		[](const string& s) {cout << s << "";});
+	cout << endl;
+}
+
+void test_10_3_2() {
+	//lambda表达式
+	vector<string> words{ "the", "quick", "red", "fox", "jumps", "over", "the", "slow", "red", "turtle" };
+	biggies(words, 5);
+}
+
+
 void test_10_3_1() {
 	//定制操作
 	//向算法传递函数
@@ -135,5 +160,6 @@ int main()
 	test_10_2_2();
 	test_10_2_3();
 	test_10_3_1();
+	test_10_3_2();
 	return 0;
 }
