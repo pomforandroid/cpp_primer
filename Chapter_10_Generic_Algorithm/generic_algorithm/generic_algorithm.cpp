@@ -7,8 +7,11 @@
 #include <numeric>
 #include <string>
 #include <algorithm>
+#include <functional>
+
 
 using namespace std;
+using namespace std::placeholders;
 
 void test_10_1() {
 	//概述
@@ -213,6 +216,64 @@ void test_10_3_3(vector<string>::size_type sz, ostream &os) {
 		
 }
 
+bool check_size(const string& s, string::size_type sz) {
+	return s.size() >= sz;
+}
+
+void testBindPara(int a, int b, int c, int d, int e) {
+	cout << a << " " << b << " " << c << " " << d << " " << e <<" "<< endl;
+}
+
+ostream& print(ostream& os, const string& s, char c) {
+	return os << s << c;
+}
+
+void test_10_3_4() {
+	//参数绑定
+	//标准库bind函数
+	auto check6 = bind(check_size, _1 , 6);
+	string s = "hello";
+	bool b1 = check6(s); //check6会调用check_size(s, 6)
+	cout << "check6 " << b1 << endl;
+
+	vector<string> words{ "the", "quick", "red", "fox", "jumps", "over", "the", "slow", "red", "turtle" };
+	vector<string> words2{ "the", "quick", "red", "fox", "jumps", "over", "the", "slow", "red", "turtle" };
+	string::size_type sz = 6;
+	auto wc = find_if(words.begin(), words.end(),
+		[=](const string& s)
+		{return s.size() >= sz;});
+	cout << "wc1" << endl;
+	for_each(wc, words.end(),
+		[](const string& s) {cout << s << " ";});
+
+	cout << endl;
+	auto wc2 = find_if(words2.begin(), words2.end(),
+		bind(check_size, _1, sz));
+
+	cout << "wc2" << endl;
+	for_each(wc2, words2.end(),
+		[](const string& s) {cout << s << " ";});
+
+	//bind的参数
+	//if testBindPara is callable object ,it has 5 para
+	int a = 1;
+	int b = 2;
+	int c = 3;
+	//用bind重排参数顺序
+	auto g = bind(testBindPara, a, b, _2, c, _1);
+
+	// 实际的调用g(_1, _2); 映射为testBindPare(a, b, _2, c, _1)
+
+	g(111, 222); //实际上调了testBindPara(a, b, 222, c, 111);
+
+	//绑定引用参数
+	//for_each(words.begin(), words.end(), bind(print, cout, _1, ' '));
+
+	for_each(words.begin(), words.end(),
+		bind(print, ref(cout), _1, ' '));
+
+}
+
 int main()
 {
 	cout << "Hello 泛型算法." << endl;
@@ -222,7 +283,8 @@ int main()
 	test_10_2_3();
 	test_10_3_1();
 	test_10_3_2();
-	
 	test_10_3_3(3, cout);
+	test_10_3_4();
+
 	return 0;
 }
