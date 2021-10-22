@@ -274,6 +274,23 @@ void test_10_3_4() {
 
 }
 
+void test_10_4_1() {
+	//插入迭代器
+	list<int> lst = { 1,2,3,4 };
+	list<int> lst2, lst3; // empty list
+
+	//
+	copy(lst.cbegin(), lst.cend(), front_inserter(lst2));
+	for (auto l : lst2)
+		cout << l << " " << endl;
+
+	//copy(lst.cbegin(), lst.cend(), lst3); 会报错
+	copy(lst.cbegin(), lst.cend(), inserter(lst3, lst3.begin()));
+
+	for (auto l : lst3)
+		cout << l << " " << endl;
+}
+
 int main()
 {
 	cout << "Hello 泛型算法." << endl;
@@ -286,5 +303,6 @@ int main()
 	test_10_3_3(3, cout);
 	test_10_3_4();
 
+	test_10_4_1();
 	return 0;
 }
