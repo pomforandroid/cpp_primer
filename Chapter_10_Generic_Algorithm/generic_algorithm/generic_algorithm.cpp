@@ -291,6 +291,45 @@ void test_10_4_1() {
 		cout << l << " " << endl;
 }
 
+void test_10_4_2() {
+	istream_iterator<int> in_iter(cin); //从cin读取int
+	istream_iterator<int> eof; //尾后迭代器
+	vector<int> vec;
+	while (in_iter != eof)
+		vec.push_back(*in_iter++);
+	for (auto v : vec)
+		cout << v << " " << endl;
+	//vector<int> vec2(in_iter, eof); it is the same result like vec
+}
+
+void test_10_4_2_2() {
+
+	//使用算法操作流迭代器
+
+	istream_iterator<int> in(cin), eof2;
+	cout << accumulate(in, eof2, 0) << endl;
+}
+
+void test_10_4_2_3() {
+	//ostream_iterator操作
+	vector<int> vec = { 1, 2, 3, 4, 5 };
+	ostream_iterator<int> out_iter(cout, " link_string ");
+	for (auto e : vec)
+		*out_iter++ = e;
+	cout << endl;
+
+	//上下两种写法都可以
+	//推荐上面的，因为格式跟其他迭代器一样的话好替换
+	for (auto e : vec)
+		out_iter = e; // 赋值语句将元素写到cout
+	cout << endl;
+
+	//通过copy打印
+	copy(vec.begin(), vec.end(), out_iter);
+	cout << endl;
+}
+
+
 int main()
 {
 	cout << "Hello 泛型算法." << endl;
@@ -304,5 +343,8 @@ int main()
 	test_10_3_4();
 
 	test_10_4_1();
+	//test_10_4_2();
+	//test_10_4_2_2();
+	test_10_4_2_3();
 	return 0;
 }
