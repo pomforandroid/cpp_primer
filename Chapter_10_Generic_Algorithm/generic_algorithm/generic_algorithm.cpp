@@ -329,6 +329,39 @@ void test_10_4_2_3() {
 	cout << endl;
 }
 
+void test_10_4_3() {
+	//反向迭代器
+	vector<int> vec = { 0, 1, 2, 11, 4, 5, 6, 7, 8, 9 };
+	for (auto r_iter = vec.crbegin();
+		r_iter != vec.crend();
+		++r_iter) //实际上是递减，移动到前一个元素
+		cout << *r_iter << endl;
+
+	sort(vec.begin(), vec.end()); 
+
+	cout << "正序" << endl;
+
+	for (auto a : vec)
+		cout << a << endl;
+
+	cout << "倒序" << endl;
+
+	sort(vec.rbegin(), vec.rend());
+	for (auto a : vec)
+		cout << a << endl;
+	string line = "my,name,is,fable";
+	auto comma = find(line.cbegin(), line.cend(), ',');
+	cout << string(line.cbegin(), comma) << endl;
+
+	//if you want to print the last word
+	auto rcomma = find(line.crbegin(), line.crend(), ',');
+	cout << string(line.crbegin(), rcomma) << endl; // 打出来elbaf 而不是fable
+	//right solution
+	cout << string(rcomma.base(), line.cend()) << endl;
+
+}
+
+
 
 int main()
 {
@@ -346,5 +379,6 @@ int main()
 	//test_10_4_2();
 	//test_10_4_2_2();
 	test_10_4_2_3();
+	test_10_4_3();
 	return 0;
 }
