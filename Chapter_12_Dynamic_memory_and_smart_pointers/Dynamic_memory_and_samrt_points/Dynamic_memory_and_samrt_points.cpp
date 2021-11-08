@@ -8,6 +8,31 @@
 using namespace std;
 
 
+//智能指针和异常
+void test_12_1_4() {
+	shared_ptr<int> sp(new int(1024)); // allocate a new obj
+	// this code throw a error, and it did not caught by 
+}// methoed ends with shared_ptr auto release memory
+
+// 使用我们自己的释放操作
+struct destination;
+struct connection {};
+connection connect(destination*);
+void disconnect(connection) {
+
+}
+
+void end_connection(connection* p) {
+	disconnect(*p);
+}
+void f2(destination& d) {
+	//get a connection ,remember to close it when it end
+	/** connection c = connect(&d);
+	shared_ptr<connection> p(&c, end_connection);
+	**/
+	// even if error happens and crash exit, connection will be close correctly
+}
+
 void process(shared_ptr<int> ptr) {
 	// use ptr
 }//ptr leaf his scope and is destroyed
