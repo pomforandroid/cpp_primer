@@ -7,6 +7,38 @@
 
 using namespace std;
 
+//unique_ptr
+void test_12_1_5() {
+	//一个unique“拥有”它所指向的对象。与shared_ptr不同，某个时刻智能有一个unique_ptr指向一个给定对象。
+	unique_ptr<double> p1;
+	unique_ptr<int> pi1(new int(42));
+	//由于一个unique“拥有”它所指向的对象，因此unique不支持普通的拷贝或者赋值操作
+	unique_ptr<string> pstr1(new string("Stsfasfasfas"));
+	//unique_ptr<string> p2(pstr1); // unique does not support copy
+	unique_ptr<string> p3;
+	//p3 = p2; // wrong: unique_ptr does not support assignment
+	//Although we cannot copy or allocate a unique_ptr, we can call release or reset to transfer the ownership of the pointer from a (non-const) unique_ptr to another unique
+	
+	unique_ptr<string> p2(pstr1.release()); //releae set p1 to null
+	cout << "p2: " << *p2 << endl; // cout Stsfasfasfas
+	unique_ptr<string> p5(new string("skankhunt"));
+	//transfer ownership of p5 to p2
+	p2.reset(p5.release()); //reset release the memory originally pointed to by p2
+	cout << "p2: " << *p2 << endl; //cout skankhunt
+}
+
+//传递unique_ptr参数和返回unique_ptr
+unique_ptr<int> clone(int p ) {
+	//correct, create a unique_ptr from int *
+	return unique_ptr<int>(new int(p));
+}
+//or return a local var 's copy
+unique_ptr<int> clone2(int p) {
+	//correct, create a unique_ptr from int *
+	auto ret = unique_ptr<int>(new int(p));
+	return ret;
+}
+
 
 //智能指针和异常
 void test_12_1_4() {
@@ -31,6 +63,14 @@ void f2(destination& d) {
 	shared_ptr<connection> p(&c, end_connection);
 	**/
 	// even if error happens and crash exit, connection will be close correctly
+}
+
+//pass deleter to unique_ptr
+void f(destination& d) {
+	/**connection c = connect(&d);
+	unique_ptr<connection, decltype(end_connection)*>
+		p(&c, end_connection);
+	**/
 }
 
 void process(shared_ptr<int> ptr) {
@@ -240,7 +280,7 @@ void StrBlob::pop_back(){
 int main()
 {
 	cout << "Hello Dynamic memory and smart points !." << endl;
-
+	test_12_1_5();
 	test_12_1_2();
 	test_12_1_3();
 	return 0;
