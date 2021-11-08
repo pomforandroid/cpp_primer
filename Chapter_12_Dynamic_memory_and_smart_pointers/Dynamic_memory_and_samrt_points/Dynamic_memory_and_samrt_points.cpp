@@ -7,6 +7,46 @@
 
 using namespace std;
 
+
+void process(shared_ptr<int> ptr) {
+	// use ptr
+}//ptr leaf his scope and is destroyed
+//shared_ptr和new结合使用
+void test_12_1_3() {
+	shared_ptr<double> p1; // share_ptr可以指向一个double
+	shared_ptr<int> p2(new int(42)); // p2指向一个值为42的int
+	// the smart pointer construcotr is explicit, so the direct initialization form must be used
+	//shared_ptr<int> pi1 = new int(42); //the direct initialization form must be used 
+	shared_ptr<int> pi2(new int(42));
+
+	//不要混合使用普通指针和智能指针 don't mix ordinay pointers and smart pointers
+
+	shared_ptr<int> p(new int(42));
+	process(p); // 拷贝p会递增他的引用计数，在process中引用计数值为2
+	// copying p will increment its reference cont, and the reference count value in process is 2
+	int i = *p; // correct: the reference cout value is 1
+
+	//也不要使用get初始化另一个智能指针或为智能指针赋值
+	shared_ptr<int> p_1(new int(42));// reference count is 1
+	int* q_1 = p_1.get(); // 正确，但是使用q时要注意，不要让它管理的指针被释放
+	{
+		shared_ptr<int>(q_1);
+	}// The programe scope ends , q is destoryed, the memory it points to has been released
+	int foo = *p_1; // 未定义，p指向的内存已经被释放了
+	cout << "foo: " << foo << endl;
+
+	//其他shared_ptr操作
+	//p = new int(1024); // 不能将一个指针赋予shared_ptr;
+	p.reset(new int(1024));
+	cout << "p: " << *p << endl;
+	//reset 经常与unique一起使用
+	if (!p.unique())
+		p.reset(new int(*p)); // we are not the only user; assign a new copy
+	//*p += newvall //Now we know that we are the only user and can change the value of the object
+
+}
+
+
 void test_12_1_2() {
 	//默认情况下，动态分配的对象是默认初始化
 	int* pi = new int; // piz指向一个动态分配，为初始化的无名对象
@@ -20,7 +60,7 @@ void test_12_1_2() {
 	string* s1 = new string; // 默认初始化
 	string* s2 = new string(); // 值初始化
 
-	int* pi1 = new int; // 默认初始化， 未定义
+	//int* pi1 = new int; // 默认初始化， 未定义
 	int* pi2 = new int(); // 值初始化， 0
 	
 	//仅有单一初始化器才可以使用auto
@@ -43,9 +83,9 @@ void test_12_1_2() {
 	double* pd = new double(33), * pd2 = pd;
 
 	//delete i; // wrong. expression must be a pointer to complete object type
-	delete pi_i1; // undifine, pi_i1 point to local var
+	//delete pi_i1; // undifine, pi_i1 point to local var
 	delete pd; // right
-	delete pd2; //undifint, pd2 指向的内存已经释放了
+	//delete pd2; //undifint, pd2 指向的内存已经释放了
 	delete pi_i2; //right ,释放一个空指针总是没有错误的
 
 	//delte之后重置指针值
@@ -66,13 +106,13 @@ Foo* factory(T arg) {
 
 //局部变量p被销毁，但是此变量是一个内置指针，而不是一个智能指针，p left his scope, nothing happen
 template <typename Foo, typename T>
-void use_factory(T arg) {
+void use_factory2(T arg) {
 	Foo* p = factory(arg);
 	//use p but didn't release it
 }//p left his scope, but the memory he pointed to was not released
 
 template <typename Foo, typename T>
-void use_factory2(T arg) {
+void use_factory3(T arg) {
 	Foo* p = factory(arg);
 	delete p; // remember to release memory ,we don't need anymore
 }
@@ -177,5 +217,6 @@ int main()
 	cout << "Hello Dynamic memory and smart points !." << endl;
 
 	test_12_1_2();
+	test_12_1_3();
 	return 0;
 }
