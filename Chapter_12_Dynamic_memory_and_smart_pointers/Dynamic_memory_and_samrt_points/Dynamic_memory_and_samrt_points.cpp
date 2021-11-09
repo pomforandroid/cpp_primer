@@ -7,6 +7,49 @@
 
 using namespace std;
 
+//allocator类
+void test_12_2_2() {
+	//Generally speaking, putting memory allocation and object constructor together may cause unnecessary wasted
+	//for example
+	int n = 10;
+	string* const p2 = new string[n]; // create n empty string
+	string s;
+	string* q1 = p2; //q2 point to the first string
+	//but we may not need n strings
+
+	//allocator类
+	allocator<string> alloc; // Allocator object that can allocate string 
+	auto const p = alloc.allocate(n); // allocate n uninitialized strings
+	// allocator allocate unconstructed memory
+	auto q = p;  //q points to the position  behind the final construction element
+	//cout << "test_12_2_2 p: " << *p << endl; // 会报错，程序终止，未构造对象的情况下使用原始内存是错误的
+	//cout << "test_12_2_2 q: " << *q << endl; // cout nothing
+	alloc.construct(q++,"skankhunt");
+	alloc.construct(q++, 10, 'c');
+	alloc.construct(q++, "hi");
+	cout << "test_12_2_2 p: " << *p << endl; // cout skankhunt ,because "alloc.construct(q++,"skankhunt");" allocate p
+	//cout << "test_12_2_2 q: " << *q << endl; // 会报错，程序终止，未构造对象的情况下使用原始内存是错误的
+	//cout << "test_12_2_2 q: " << *--q << endl; //cout hi
+	//cout << "test_12_2_2 q: " << *q << endl; // cout hi
+	while (q != p) {
+		cout << "test_12_2_2 q: " << *(q-1) << endl;
+		alloc.destroy(--q);
+	}
+	// release memory by call deallocate to complete
+	alloc.deallocate(p, n);
+	
+
+	allocator<int> ialloc;
+	//Algorithms for copying and filling uninitialized memory 
+	vector<int> vi = vector<int>(10, 223);
+	auto p5 = ialloc.allocate(vi.size() * 2);
+	//uninitialized_copy will return a pointer, points to the position  behind the final construction element
+	auto q6 = uninitialized_copy(vi.begin(), vi.end(), p5); //q6 is the last position after allocate by p5
+	uninitialized_fill_n(q6, vi.size(), 42);
+	cout << "q6 " << *q6 << endl;
+	cout << "q6 is behind at " << *(q6-1) << endl; // cout 223
+}
+
 //动态数组
 
 int get_size() {
@@ -399,6 +442,7 @@ StrBlobStr StrBlob:: end() {
 int main()
 {
 	cout << "Hello Dynamic memory and smart points !." << endl;
+	test_12_2_2();
 	test_12_2_1();
 	test_12_1_5();
 	test_12_1_2();
