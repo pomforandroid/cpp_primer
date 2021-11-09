@@ -7,6 +7,63 @@
 
 using namespace std;
 
+//动态数组
+
+int get_size() {
+	return 0;
+}
+void test_12_2_1() {
+	//call get_size to confirm  how many ints are allocated
+	int* pia = new int[get_size()];
+	//Type alias
+	typedef int arrT[42];
+	int* p = new arrT;// assign an array of 42 ints; p pointed to the first int
+
+	//initialize an array of dynamically allocate objects
+	// in default, object allocated by new, whether in a single allocate or in an array, are initialized by default
+
+	int* pia1 = new int[10]; //undefined, ten uninitialized int
+	int* pia2 = new int[10](); //10 int value initialized to 0
+	string* psa = new string[10];//10 empty string
+	string* psa2 = new string[10](); //10 empty string
+
+	//new standard, using Initializer
+	int* pia3 = new int[10]{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+
+	// it is legal to allocate an empty array
+	int* p_empty = new int[0];
+	cout << "p-empty " << *p_empty << endl;
+
+	//释放动态数组
+	delete[]p;// Square brackets are required
+	//smart point and Dynamic array
+	unique_ptr<int[]> up(new int[10]);
+	//up.release();// Automatically use delete[] to destory its pointer
+	//when an unique_ptr point to an array instead of a single object, we can not use dot and arrow member operators
+	for (size_t i = 0; i != 10; i++)
+		up[i] = i;// assign an new value to each element
+	// it is difference between unique_ptr and shared_ptr, shared_ptr does not directly support the management of dynamic arrays
+	// if you want, you must offer the deleter defined by yourself
+	// must provide your owner deleter
+	shared_ptr<int[]> sp(new int[10], [](int* p) {delete[]p;});
+	sp.reset();
+}
+
+//weak ptr
+void test_12_1_6() {
+	// weak ptr 是一种不控制所指向对象的智能指针，它指向一个shared_ptr管理的对象
+	//binding a weak_ptr to a shared_ptr will not change the reference count of shared_ptr
+
+	//it need a share_ptr to init
+	auto p = make_shared<int>(42);
+	weak_ptr<int> wp(p);  // wp weakly share p1, the reference count of p has not change
+	//because obj maybe not exist, we cannot use weak_ptr to directly visit obj
+	//must use lock
+	if (shared_ptr<int> np = wp.lock()) {
+		//np share object with p in the scope
+	}
+}
+
 //unique_ptr
 void test_12_1_5() {
 	//一个unique“拥有”它所指向的对象。与shared_ptr不同，某个时刻智能有一个unique_ptr指向一个给定对象。
@@ -231,8 +288,23 @@ shared_ptr<Foo> use_factory(T arg) {
 }// p离开了作用域，但它指向的内存不会被释放掉
 
 
+// StrBlobStr throw a error when trying to visit an unexisted element
+
+class StrBlobStr;
 class StrBlob {
+	friend class StrBlobStr;
+	StrBlobStr begin();
+	StrBlobStr end();
+	/** StrBlobStr begin() {
+		return StrBlobStr(*this);
+	}
+
+	StrBlobStr end() {
+		auto ret = StrBlobStr(*this, data->size());
+		return ret;
+	}**/
 public:
+
 	typedef vector<string>::size_type size_type;
 	StrBlob();
 	StrBlob(initializer_list<string> il);
@@ -248,6 +320,8 @@ private:
 	shared_ptr<vector<string>> data;
 	//如果data[i]不合法，抛出一个异常
 	void check(size_type i, const string& msg) const;
+
+	
 };
 
 StrBlob::StrBlob():data(make_shared<vector<string>>()){}
@@ -276,10 +350,56 @@ void StrBlob::pop_back(){
 	return data->pop_back();
 }
 
+class StrBlobStr {
+public:
+	StrBlobStr() :curr(0) {}
+	StrBlobStr(StrBlob& a, size_t sz = 0) :
+		wptr(a.data), curr(sz) {}
+	string deref() const;
+	StrBlobStr& incr(); //前缀递增
+
+private:
+	//if check sucess, 'check' return a shared_ptr pointed to vector
+	shared_ptr<vector<string>> check(size_t, const string&) const;
+	//save a weak_ptr, which means the underlying vector will be destroyed
+	weak_ptr<vector<string>> wptr;
+	size_t curr; // current position in array
+};
+
+shared_ptr<vector<string>>
+StrBlobStr::check(size_t i, const string& msg) const {
+	auto ret = wptr.lock();
+	if (!ret)
+		throw runtime_error("unbound StrBlobStr");
+	if (i >= ret->size())
+		throw out_of_range(msg);
+	return ret;
+}
+string StrBlobStr::deref() const {
+	auto p = check(curr, "derefence past and end");
+	return (*p)[curr];
+}
+
+StrBlobStr& StrBlobStr::incr() {
+	auto p = check(curr, "increament past end of StrBlobPtr");
+	++curr;// 推进当前位置
+	return *this;
+}
+
+StrBlobStr StrBlob::begin() {
+	return StrBlobStr(*this);
+}
+
+StrBlobStr StrBlob:: end() {
+	auto ret = StrBlobStr(*this, data->size());
+	return ret;
+}
+
 
 int main()
 {
 	cout << "Hello Dynamic memory and smart points !." << endl;
+	test_12_2_1();
 	test_12_1_5();
 	test_12_1_2();
 	test_12_1_3();
