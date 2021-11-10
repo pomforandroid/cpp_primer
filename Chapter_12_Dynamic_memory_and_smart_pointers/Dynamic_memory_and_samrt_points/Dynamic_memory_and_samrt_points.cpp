@@ -4,8 +4,96 @@
 #include "Dynamic_memory_and_samrt_points.h"
 #include <list>
 #include <vector>
+#include <map>
+#include <set>
+#include <sstream>
+#include <fstream>
 
 using namespace std;
+
+
+//使用标准库:文本查询程序
+//在类之间共享数据
+class QueryResult; //in order to to define the return type of the function query, this definition is necessary
+class TextQuery {
+public:
+	using line_no = vector<string>::size_type;
+	TextQuery(ifstream&);
+	QueryResult query(const string&) const;
+private:
+	shared_ptr<vector<string>> file; //输入文件
+	map<string, shared_ptr<set<line_no>>> wm;
+};
+
+//The Contructor of TextQuery accept a ifstream, read input file by line
+TextQuery::TextQuery(ifstream& is) : file(new vector<string>)
+{
+	string text;
+	while (getline(is, text)) { //each line in text
+		file->push_back(text); // save text in this line
+		int n = file->size() - 1; // save current line number
+		istringstream line(text); //Break down lines of text into words
+		string word;
+		while (line >> word) {
+			auto& lines = wm[word]; // lines is a shared_ptr
+			if (!lines) // this poiner is empty when we meet it first time
+				lines.reset(new set<line_no>);
+			lines->insert(n); // insert this line-number into set
+		}
+	}
+
+}
+
+class QueryResult {
+
+friend ostream& print(ostream&, const QueryResult&);
+
+public:
+	using line_no = vector<string>::size_type;
+QueryResult(string s, 
+	shared_ptr<set<line_no>> p,
+	shared_ptr<vector<string>> f):sought(s), lines(p), file(f){}
+private:
+	string sought; //search word
+	shared_ptr<set<line_no>>lines; //出现的行号
+	shared_ptr<vector<string>> file; //output file
+};
+QueryResult 
+TextQuery::query(const string& sought) const {
+	//if can not find out sought, then return a poiner ponited to this set
+	static shared_ptr<set<line_no>> nodata(new set<line_no>);
+	// using find rather than position
+	auto loc = wm.find(sought);
+	if (loc == wm.end())
+		return QueryResult(sought, nodata, file); //not find
+	else
+		return QueryResult(sought, loc->second, file);
+}
+string make_plural(size_t ctr, const string& word, const string& ending = "s") {
+	return (ctr > 1) ? word + ending : word;
+}
+
+ostream& print(ostream& os, const QueryResult& qr) {
+	//if we find word, print the apprear count and the position
+	os << qr.sought << " occurs " << qr.lines->size() << " "
+		<< make_plural(qr.lines->size(), "time", "s") << endl;
+	//print word accurs evey line
+	for (auto num : *qr.lines)
+		os << "\t(line " << num + 1 << ")"
+		<< *(qr.file->begin() + num) << endl;
+	return os;
+}
+
+void test_12_3_2() {
+	string ifile = "D:\\test.txt";
+	ifstream in(ifile);
+	if (in) {
+		TextQuery textQuery = TextQuery(in);
+		auto ret = textQuery.query("the");
+		print(cout, ret);
+	}
+
+}
 
 //allocator类
 void test_12_2_2() {
@@ -442,10 +530,11 @@ StrBlobStr StrBlob:: end() {
 int main()
 {
 	cout << "Hello Dynamic memory and smart points !." << endl;
-	test_12_2_2();
+	/**test_12_2_2();
 	test_12_2_1();
 	test_12_1_5();
 	test_12_1_2();
-	test_12_1_3();
+	test_12_1_3();**/
+	test_12_3_2();
 	return 0;
 }
