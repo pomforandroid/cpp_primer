@@ -7,6 +7,11 @@ using namespace std;
 
 class Sales_data { // struct和class的默认访问权限不一样，struct在第一个访问说明符之前的成员是public，而class则是private
 public: // 添加了访问说明符
+	//为Sales_data的非成员函数所做的友元声明
+	friend Sales_data add(const Sales_data&, const Sales_data&);
+	friend istream& read(istream&, Sales_data&);
+	friend ostream& print(ostream&, const Sales_data&);
+
 	//constructor function newly add
 	Sales_data() = default; // c++ 11 newly added
 	Sales_data(const string& s) :bookNo(s) {}
@@ -86,9 +91,9 @@ void test_7_1_5() {
 	Sales_data total; //uses the defautl constructor when we didn't define any construct object
 	Sales_data trans = Sales_data("skankhutn", 42, 10.24f);
 	total = trans; //which is equal to 
-	total.bookNo = trans.bookNo;
+	/**total.bookNo = trans.bookNo; //commend it case we change it to private
 	total.units_sold = trans.units_sold;
-	total.revenue = trans.revenue;
+	total.revenue = trans.revenue;**/
 }
 
 void use_improved_Sales_data(){
