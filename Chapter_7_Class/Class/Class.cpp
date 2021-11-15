@@ -5,8 +5,8 @@
 
 using namespace std;
 
-struct Sales_data {
-
+class Sales_data { // struct和class的默认访问权限不一样，struct在第一个访问说明符之前的成员是public，而class则是private
+public: // 添加了访问说明符
 	//constructor function newly add
 	Sales_data() = default; // c++ 11 newly added
 	Sales_data(const string& s) :bookNo(s) {}
@@ -25,6 +25,8 @@ struct Sales_data {
 	// 表示this是一个指向常量的指针，称之为常量成员函数
 	string isbn() const { return bookNo; }
 	Sales_data& combine(const Sales_data&);
+
+private:
 	double avg_price() const;
 	
 	string bookNo;
