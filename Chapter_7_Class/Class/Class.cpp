@@ -10,6 +10,7 @@ struct Sales_data {
 	//constructor function newly add
 	Sales_data() = default; // c++ 11 newly added
 	Sales_data(const string& s) :bookNo(s) {}
+	//construct funciton initlial list
 	Sales_data(const string& s, unsigned n, double p) :bookNo(s),
 		units_sold(n),
 		revenue(p* n) {}
@@ -71,6 +72,21 @@ Sales_data add(const Sales_data& lhs, const Sales_data&rhs) {
 	Sales_data sum = lhs; // copy the data of member if lhs to sum
 	sum.combine(rhs);
 	return sum;
+}
+
+//defined the constructor function outside of class
+Sales_data::Sales_data(istream & is) {
+	read(is, *this);
+}
+
+//拷贝，赋值和析构
+void test_7_1_5() {
+	Sales_data total; //uses the defautl constructor when we didn't define any construct object
+	Sales_data trans = Sales_data("skankhutn", 42, 10.24f);
+	total = trans; //which is equal to 
+	total.bookNo = trans.bookNo;
+	total.units_sold = trans.units_sold;
+	total.revenue = trans.revenue;
 }
 
 void use_improved_Sales_data(){
