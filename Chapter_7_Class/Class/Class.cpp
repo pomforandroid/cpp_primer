@@ -6,6 +6,15 @@
 using namespace std;
 
 struct Sales_data {
+
+	//constructor function newly add
+	Sales_data() = default; // c++ 11 newly added
+	Sales_data(const string& s) :bookNo(s) {}
+	Sales_data(const string& s, unsigned n, double p) :bookNo(s),
+		units_sold(n),
+		revenue(p* n) {}
+	Sales_data(istream&);
+
 	// new member: about the operator of Sales_data object
 	// when call total.isbn() like calling Sales_data::isbn(&total)
 	// the compiler is responsible for passing the address of 'total' to the implicit parameter 'this' of isbn
@@ -64,27 +73,24 @@ Sales_data add(const Sales_data& lhs, const Sales_data&rhs) {
 	return sum;
 }
 
-
-
-
-
 void use_improved_Sales_data(){
-	Sales_data total;
-	if (read(cin, total)) {
-		Sales_data trans;
-		while (read(cin, trans)) {
-			if (total.isbn() == trans.isbn())
-				total.combine(trans);
-			else {
-				print(cout, total) << endl; //output result
-				total = trans;
-			}
-		}
-		print(cout, total) << endl;
-	}
-	else {
-		cerr << "No data>!" << endl;
-	}
+	Sales_data total; //uses the defautl constructor when we didn't define any construct object
+	Sales_data transl;
+	//if (read(cin, total)) {
+	//	Sales_data trans;
+	//	while (read(cin, trans)) {
+	//		if (total.isbn() == trans.isbn())
+	//			total.combine(trans);
+	//		else {
+	//			print(cout, total) << endl; //output result
+	//			total = trans;
+	//		}
+	//	}
+	//	print(cout, total) << endl;
+	//}
+	//else {
+	//	cerr << "No data>!" << endl;
+	//}
 
 }
 
