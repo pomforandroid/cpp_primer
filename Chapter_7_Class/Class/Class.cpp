@@ -134,6 +134,18 @@ public:
 	inline char get(pos h, pos w) const;
 	Screen& move(pos r, pos c);
 
+	Screen& set(char);
+	Screen& set(pos, pos, char);
+
+	Screen& display(ostream& os) {
+		 do_display(os);
+		 return *this;
+	}
+	const Screen& display(ostream& os) const {
+		do_display(os);
+		return *this;
+	}
+
 private:
 	pos cursor = 0;
 	pos height= 0;
@@ -142,7 +154,21 @@ private:
 	mutable size_t access_ctr; 
 	size_t non_mutable_access_ctr;
 
+	void do_display(ostream& os) const { os << contents; }
+
 };
+
+inline
+Screen& Screen::set(char c) {
+	contents[cursor] = c;
+	return *this;
+}
+
+inline Screen& Screen::set(pos r, pos col, char ch)
+{
+	contents[r * width + col] = ch;
+	return *this;
+}
 
 //令成员作为内联函数。
 // 如之前所见，定义在类内部的成员函数是自动inline的
@@ -165,6 +191,16 @@ void using_Screen() {
 	cout << "myscreen.get() " << ch << endl;
 	ch = myscreen.get(0, 0); //调用Screen::get(pos, pos)
 	cout << "myscreen.get(0,0) " << ch << endl;
+
+	//move the cursor the specified position and set the char value of this position
+	myscreen.move(4, 0).set('#'); //链式调用
+	//like myscreen.move(4,0); myscreen.set('#')
+
+	Screen myScreen2(5, 3,' ');
+	const Screen blank(5, 3, ' ');
+	myScreen2.set('#').display(cout);
+	blank.display(cout);
+
 }
 //mutable data member 
 //which never be const, even if is is a member in const object
