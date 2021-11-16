@@ -2,6 +2,7 @@
 //
 
 #include "Class.h"
+#include <vector>
 
 using namespace std;
 
@@ -117,8 +118,71 @@ void use_improved_Sales_data(){
 
 }
 
+
+//类的其他特性
+class Screen {
+public:
+	typedef string::size_type pos;
+	//using pos = string::size_type;
+	Screen() = default;
+	Screen(pos h, pos w, char c):height(h), width(w), contents(h*w, c){}
+	void some_member() const;
+	char get() const {
+		return contents[cursor];
+	}
+
+	inline char get(pos h, pos w) const;
+	Screen& move(pos r, pos c);
+
+private:
+	pos cursor = 0;
+	pos height= 0;
+	pos width = 0;
+	string contents;
+	mutable size_t access_ctr; 
+	size_t non_mutable_access_ctr;
+
+};
+
+//令成员作为内联函数。
+// 如之前所见，定义在类内部的成员函数是自动inline的
+inline
+Screen& Screen::move(pos r, pos c ){
+	pos row = r * width; //calculate the posision of row
+	cursor = row + c; // move the cursor to the specified column within the line
+	return *this; //return the object with lvaule form
+}
+
+char Screen::get(pos r, pos c) const {
+	pos row = r * width; //calculate the posision of row
+	return contents[row + c];
+}
+
+void using_Screen() {
+	Screen myscreen;
+	//重载成员函数 overloaded member function
+	char ch = myscreen.get(); // 调用Screen::get()
+	cout << "myscreen.get() " << ch << endl;
+	ch = myscreen.get(0, 0); //调用Screen::get(pos, pos)
+	cout << "myscreen.get(0,0) " << ch << endl;
+}
+//mutable data member 
+//which never be const, even if is is a member in const object
+void Screen::some_member() const {
+	++access_ctr;
+	// ++non_mutable_access_ctr; error:C++ expression must be a modifiable lvalue
+}
+
+//类数据成员的初始值
+class Window_mgr {
+private:
+	//in default, a window_mgr included an empty Screen with a standard size 
+	vector<Screen> screens{ Screen(24, 80, ' ') };
+};
+
 int main()
 {
 	cout << "Hello CMake." << endl;
+	using_Screen();
 	return 0;
 }
