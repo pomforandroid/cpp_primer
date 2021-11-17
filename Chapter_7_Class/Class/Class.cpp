@@ -216,9 +216,37 @@ private:
 	vector<Screen> screens{ Screen(24, 80, ' ') };
 };
 
+//类类型
+struct First {
+	int memi;
+	int getMem();
+};
+
+struct Second {
+	int memi;
+	int getMem();
+};
+
+class Screen2; // Screen2的声明，前向声明，forward declaration
+
+// 一旦一个类的名字出现，他就被认为是声明过来。因此类允许包含指向他自身类型的引用或指针
+class Link_screen {
+	Screen window;
+	Link_screen* next;
+	Link_screen* pre;
+};
+
+
 int main()
 {
 	cout << "Hello CMake." << endl;
 	using_Screen();
+
+	First obj1;
+	//Second obj2 = obj1; //wrong, obj1 and obj2 are of different types
+
+	Sales_data item1;
+	//class Sales_data item1;// 一条等价的声明
+	class Sales_data item2;
 	return 0;
 }
