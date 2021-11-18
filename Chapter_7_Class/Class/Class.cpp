@@ -233,7 +233,7 @@ void Screen::some_member() const {
 	// ++non_mutable_access_ctr; error:C++ expression must be a modifiable lvalue
 }
 
-void Window_mgr::clear(ScreenIndex i) {
+void Window_mgr::clear(ScreenIndex i) { //前面有Window_mgr::所以ScreenIndex就没必要加Window_mgr::
 	Screen& s = screens[i];
 	s.contents = string(s.height * s.width, 's');
 }
@@ -281,5 +281,13 @@ int main()
 	Sales_data item1;
 	//class Sales_data item1;// 一条等价的声明
 	class Sales_data item2;
+
+	//类的作用域
+	Screen::pos ht = 24, wd = 80;
+	Screen scr(ht, wd, ' ');
+	Screen* p = &scr;
+	char c = scr.get(); //访问scr对象的get成员
+	c = p->get();	//访问p所指对象的get成员
+
 	return 0;
 }
