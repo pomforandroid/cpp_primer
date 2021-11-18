@@ -122,6 +122,9 @@ void use_improved_Sales_data(){
 //secondly to defind Screen, included the declaration for clear
 //finally defind clear function and now it can use Screen member
 
+//成员定义中的普通块作用域的名字查找
+int height; // 定义了一个名字，稍后在Screen中使用
+
 //类的其他特性
 class Screen {
 	//把Window_mgr指定成它的友元
@@ -134,6 +137,12 @@ class Screen {
 
 public:
 	typedef string::size_type pos;
+	void dummy_fcn(pos height) {
+		cursor = width * height; // wich height? 是参数传入的height
+		cursor = width * this->height; // 成员height
+		cursor = width * ::height; //wich height? 是那个全局的
+	}
+	void setHeight(pos);
 	//using pos = string::size_type;
 	Screen() = default;
 	Screen(pos h, pos w, char c):height(h), width(w), contents(h*w, c){}
@@ -168,6 +177,11 @@ private:
 	void do_display(ostream& os) const { os << contents; }
 
 };
+Screen::pos verify(Screen::pos);
+void Screen::setHeight(pos var) {
+	//verify的声明位于setHeight的定义之前
+	height = verify(var);
+}
 
 //类数据成员的初始值
 class Window_mgr {
@@ -269,6 +283,25 @@ struct X {
 void f(); // 声明那个定义在X中的函数
 void X::h() { return f(); } //正确：现在f的声明在作用域中了
 
+//名字查找与类的作用域
+//firstly,look ofr the statement in the block where the name is located,and  only consider the statement that appears before the use of the name
+//if not find, continue to look for the outer scope
+//not find finally, then program error 
+
+
+typedef double Money;
+string bal;
+//when compiler find the statement for balance function, it will looking ofr the statement for Monkey
+//compiler only consider the statement before using Monkey in Account
+// cause it did not find the pair member, compiler will continue to look for it int Account 's outer scoper
+// then comipler find Money ’s typedef statement
+// On the other side, the body of the'balance' function is processed after the entire class is visible
+class Account {
+public:
+	Money balance() { return bal; }
+private:
+	Money bal;
+};
 
 int main()
 {
