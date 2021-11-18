@@ -118,9 +118,20 @@ void use_improved_Sales_data(){
 
 }
 
+//firstly to define class Window_mgr, and declare clear function, but can't define it, because you should declare Screen before using Screen 
+//secondly to defind Screen, included the declaration for clear
+//finally defind clear function and now it can use Screen member
 
 //类的其他特性
 class Screen {
+	//把Window_mgr指定成它的友元
+	friend class Window_mgr;
+	// 令成员函数作为友元
+	// Window_mgr::clear必须在Screen类之前被声明, 要不下面这个会报错
+	//friend void Window_mgr::clear(Window_mgr::ScreenIndex);
+	//函数重载和友元
+	//如果一个类想把一组重载函数声明成它的友元，它需要对这组函数中每一个分别声明
+
 public:
 	typedef string::size_type pos;
 	//using pos = string::size_type;
@@ -156,6 +167,19 @@ private:
 
 	void do_display(ostream& os) const { os << contents; }
 
+};
+
+//类数据成员的初始值
+class Window_mgr {
+public:
+	//every number of screen in window
+	using ScreenIndex = std::vector<Screen>::size_type;
+	//
+	void clear(ScreenIndex);
+
+private:
+	//in default, a window_mgr included an empty Screen with a standard size 
+	vector<Screen> screens{ Screen(24, 80, ' ') };
 };
 
 inline
@@ -209,12 +233,10 @@ void Screen::some_member() const {
 	// ++non_mutable_access_ctr; error:C++ expression must be a modifiable lvalue
 }
 
-//类数据成员的初始值
-class Window_mgr {
-private:
-	//in default, a window_mgr included an empty Screen with a standard size 
-	vector<Screen> screens{ Screen(24, 80, ' ') };
-};
+void Window_mgr::clear(ScreenIndex i) {
+	Screen& s = screens[i];
+	s.contents = string(s.height * s.width, 's');
+}
 
 //类类型
 struct First {
@@ -235,6 +257,17 @@ class Link_screen {
 	Link_screen* next;
 	Link_screen* pre;
 };
+
+//友元声明和作用域
+struct X {
+	friend void f() {/*友元函数可以定义在类的内部*/ }
+	//X() { f(); } //错误：f还没有被声明
+	void g();
+	void h();
+};
+//void X::g() { return f(); } //错误：f还没有被声明
+void f(); // 声明那个定义在X中的函数
+void X::h() { return f(); } //正确：现在f的声明在作用域中了
 
 
 int main()
