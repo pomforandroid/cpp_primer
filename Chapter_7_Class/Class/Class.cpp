@@ -14,7 +14,9 @@ public: // 添加了访问说明符
 	friend ostream& print(ostream&, const Sales_data&);
 
 	//constructor function newly add
-	Sales_data() = default; // c++ 11 newly added
+	//Sales_data() = default; // c++ 11 newly added
+	//defind a default constructor, make it the same as a construstor which only accept a string actual para
+	Sales_data(const string s = "") : bookNo(s) {}
 	Sales_data(const string& s) :bookNo(s) {}
 	//construct funciton initlial list
 	Sales_data(const string& s, unsigned n, double p) :bookNo(s),
@@ -177,10 +179,17 @@ private:
 	void do_display(ostream& os) const { os << contents; }
 
 };
+
+
 Screen::pos verify(Screen::pos);
 void Screen::setHeight(pos var) {
 	//verify的声明位于setHeight的定义之前
 	height = verify(var);
+}
+Screen::pos verify(Screen::pos) {
+	//dosome
+	Screen::pos i = 1;
+	return i;
 }
 
 //类数据成员的初始值
@@ -303,12 +312,63 @@ private:
 	Money bal;
 };
 
+//下面这一段跟前面的构造函数效果相同，但是原来的版本初始化了它的数据成员，这个版本是赋值
+/**
+Sales_data::Sales_data(const string& s, unsigned cnt, double price) {
+	bookNo = s;
+	units_sold = cnt;
+	revenue = cnt * price;
+}
+**/
+//构造函数的初始值有时必不可少
+//如果成员是const或者是引用得话，必须将其初始化
+class ConstRef {
+public:
+	ConstRef(int ii);
+
+private:
+	int i;
+	//ci和ri必须被初始化
+	const int ci;
+	int& ri; 
+};
+/**
+ConstRef::ConstRef(int ii)
+{
+	//赋值
+	i = ii; //right
+	//ci = ii; //错误，不能给const赋值
+	//ri = i; // 错误，ri没被初始化 references must be initialized
+}
+**/
+
+ConstRef::ConstRef(int ii) :i(ii), ci(ii), ri(i) {
+
+}
+
+void test_7_5_1() {
+	ConstRef c = ConstRef(1);
+}
+
+//成员初始化的顺序， 跟它们在类中出现的顺序一致
+class X2 {
+	int i; //初始化列表i 比j早初始化
+	int j;
+public:
+	// X2(int val) :j(val), i(j) { } 未定义，i在j之前被初始化
+	X2(int val) :i(val), j(val) {}
+};
+
+
+
+
 int main()
 {
 	cout << "Hello CMake." << endl;
+	//test_7_5_1();
 	using_Screen();
 
-	First obj1;
+	//First obj1;
 	//Second obj2 = obj1; //wrong, obj1 and obj2 are of different types
 
 	Sales_data item1;
