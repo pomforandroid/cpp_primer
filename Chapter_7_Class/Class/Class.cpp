@@ -451,6 +451,34 @@ void test_7_5_5() {
 	Data val1 = { 0, "sb" };
 }
 
+//字面值常量类
+//数据成员都是字面值类型的聚合类是字面值常量类。如果一个类不是聚合类，但它符合下面要求，也是：
+//数据成员必须是字面值类型
+//类必须至少含有一个constexpr构造函数
+//如果一个数据成员含有类内初始值，则内置类型成员的初始值必须是一条常量表达式；or如果成员属于某种类类型，初始值必须使用成员自己的constexpr构造函数
+//类必须使用析构函数的默认定义，该成员负责销毁类的对象
+class Debug {
+public:
+	constexpr Debug(bool b = true) :hw(b), io(b), other(b) {}
+	constexpr Debug(bool b , bool i, bool o) : hw(b), io(b), other(b) {}
+	constexpr bool any() { return hw || io || other; }
+
+	void set_io(bool b) { io = b };
+	void set_hw(bool b) { io = b };
+	void set_other(bool b) { io = b };
+
+private:
+	bool hw; // hardware error
+	bool io;// io error
+	bool other;// other error
+};
+
+void test_7_5_5() {
+	Debug io_sub(false, true, false); 
+	if (io_sub.any())
+		cerr << "lalalalalaal" << endl;
+}
+
 
 int main()
 {
