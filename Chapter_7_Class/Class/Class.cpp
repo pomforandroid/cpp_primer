@@ -6,6 +6,28 @@
 
 using namespace std;
 
+
+//委托构造函数
+class Sales_data3 {
+
+	//非委托构造函数使用对应的实参初始化成员
+	Sales_data3(const string& s, unsigned cnt, double price) :bookNo(s),
+		units_sold(cnt),
+		revenue(price* cnt) {}
+
+	//其他构造函数全部委托给另一个构造函数
+	Sales_data3():Sales_data3 ("", 0, 0){}
+	Sales_data3(string s) :Sales_data3(s, 0, 0){}
+
+private:
+	double avg_price() const;
+
+	string bookNo;
+	unsigned units_sold = 0;
+	double revenue = 0.0;
+};
+
+
 class Sales_data { // struct和class的默认访问权限不一样，struct在第一个访问说明符之前的成员是public，而class则是private
 public: // 添加了访问说明符
 	//为Sales_data的非成员函数所做的友元声明
