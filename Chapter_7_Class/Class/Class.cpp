@@ -479,6 +479,75 @@ void test_7_5_5() {
 		cerr << "lalalalalaal" << endl;
 }
 
+//类的静态成员
+//声明静态成员：通过在成员的声明之前加上关键字static是的与类关联在一起。
+//和其他成员一样，静态成员可以是public的或private的。静态数据成员的类型可以是常量，引用，指针，类类型
+class Account {
+public:
+	void calculate() { 
+		//其他成员与之前的版本一致
+		amount += amount * interestRate; 
+	}
+	static double rate() { return interestRate; }
+	static void rate(double);
+	static constexpr int period2 = 30;
+
+private:
+	//静态成员的类内部初始化
+	static constexpr int period = 30;
+	//static constexpr int period = 30; //period是常量表达式
+	//如果仅用作内部ok，但是外部要使用，比如说test_const_constexpr
+
+	double daily_tbl[period];
+
+	string owner;
+	double amount;
+	static double interestRate;
+	static double initRate();
+};
+
+void test_const_constexpr(const int&) {
+
+}
+
+void test_7_6_1() {
+	//test_const_constexpr(Account::period); //member (declared at line 495) is inaccessible
+	test_const_constexpr(Account::period2);
+}
+
+//定义静态成员
+void Account::rate(double newRate) {
+	interestRate = newRate;
+}
+
+void test_7_6() {
+	//使用类的静态成员
+	double r;
+	r = Account::rate(); //使用作用域运算符访问静态成员
+
+	Account ac1;
+	Account* ac2 = &ac1;
+	r= ac1.rate(); //通过Accoutn的对象或引用
+	r= ac2->rate(); 
+}
+
+//静态成员能用于某些场景，而普通成员不能
+class Bar {
+public:
+private:
+	static Bar mem1; //正确 静态成员可以是不完全类型
+	Bar* mem2; //正确 指针成员可以是不完全类型
+	//Bar mem3; //错误 数据成员必须是完全类型
+};
+
+//静态成员和普通成员的另外一个区别是我们可以使用静态成员作为默认实参
+class Screen {
+public :
+	Screen& clear(char = bkground);
+
+private:
+	static const char bkground;
+};
 
 int main()
 {
