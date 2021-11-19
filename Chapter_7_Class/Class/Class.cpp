@@ -39,12 +39,13 @@ public: // 添加了访问说明符
 	//Sales_data() = default; // c++ 11 newly added
 	//defind a default constructor, make it the same as a construstor which only accept a string actual para
 	Sales_data(const string s = "") : bookNo(s) {}
-	Sales_data(const string& s) :bookNo(s) {}
+	//Sales_data(const string& s) :bookNo(s) {}
 	//construct funciton initlial list
 	Sales_data(const string& s, unsigned n, double p) :bookNo(s),
 		units_sold(n),
 		revenue(p* n) {}
-	Sales_data(istream&);
+	//抑制构造函数定义的隐式转换可以将构造函数声明为explicit加以阻止
+	explicit Sales_data(istream&);
 
 	// new member: about the operator of Sales_data object
 	// when call total.isbn() like calling Sales_data::isbn(&total)
@@ -405,7 +406,36 @@ void test_7_5_3() {
 	//obj.isbn() 编译器报错expression must have class type ，obj是一个函数
 }
 
+//隐式的类类型转换
+//converting constructor
+void test_7_5_4() {
+	Sales_data item;
+	string null_book = "9-99-99999-9";
+	//构造一个临时的Sales_data对象
+	//该对象的units_sold和revenue等于0，bookNo等于null_book
+	item.combine(null_book);
+	//只允许一步类类型转换
+	//item.combine("9999999");//报错no suitable constructor exists to convert from to
+	//可以显示把字符串转换成string or sales_data
+	item.combine(string("9-9999-9999"));
+	item.combine(Sales_data("9-9999-9999"));
 
+	//抑制构造函数定义的隐式转换可以将构造函数声明为explicit加以阻止
+	//item.combine(cin); //no suitable user-defined conversion from to exists
+
+	//为转换显示使用构造函数
+	item.combine(Sales_data(cin));
+	item.combine(static_cast<Sales_data>(cin));
+
+	//标准库中含有显式构造函数的类
+	//接受一个单参数的const char * string 不是explicit
+	//接受一个容量参数的vector构造函数是explicit
+}
+
+//错误，explicit关键字只允许出现在类内的构造函数声明出
+/**explicit Sales_data::Sales_data(istream& is) {
+	read(is, *this);
+}**/
 
 int main()
 {
