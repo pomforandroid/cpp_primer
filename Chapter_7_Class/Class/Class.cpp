@@ -382,6 +382,29 @@ public:
 };
 
 
+class NoDefault {
+public:
+	NoDefault(const string&);
+	//There have another members,but no other constructor
+};
+
+struct A {
+	NoDefault my_mem;
+};
+//A a; //wrong, 不能为A合成构造函数
+struct B {
+	//错误，不能为A合成构造函数 编译器报错no default constructor exists for class
+	/**
+	B(){} 
+	NoDefault b_member;
+	**/
+};
+
+void test_7_5_3() {
+	Sales_data obj(); //正确，但是是定义了一个函数而不是对象
+	//obj.isbn() 编译器报错expression must have class type ，obj是一个函数
+}
+
 
 
 int main()
