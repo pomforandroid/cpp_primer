@@ -437,6 +437,21 @@ void test_7_5_4() {
 	read(is, *this);
 }**/
 
+struct Data {
+	int ival;
+	string s;
+};
+
+void test_7_5_5() {
+	//聚合类使得用户可以直接访问其成员，并且具有特殊的初始化语法形式，当一个类满足如下条件，可以说他是聚合的
+	//所以成员都是public
+	//没有定义任何构造函数
+	//没有类内初始值
+	//没有基类，也没有virtual函数
+	Data val1 = { 0, "sb" };
+}
+
+
 int main()
 {
 	cout << "Hello CMake." << endl;
